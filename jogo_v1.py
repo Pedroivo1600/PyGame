@@ -1,27 +1,35 @@
 import pygame
-
+import random
 pygame.init()
 
+#MEDIDAS
 WIDTH = 500
 HEIGHT = 400
 ball_width = 30
 ball_height = 20
+
+#Defininindo a tela principal e imagens
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Goalkeeper pro')
-background = pygame.image.load('img/estádio.png').convert()
+background = pygame.image.load('img/estadio.png').convert()
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
-football = pygame.image.load('img/football.png').convert()
+football = pygame.image.load('img/football.png').convert_alpha()
 football = pygame.transform.scale(football, (ball_width, ball_height))
 
+#Posição da bola
+football_x = random.randint(10, WIDTH-ball_width)
+football_y = random.randint(-50, -ball_height)
+#Velocidade da bola
+football_speedx = random.randint(1, 2)
+football_speedy = random.randint(4, 6)
 
-football_x = 250
-football_y = -ball_height
-football_speedx = 4
-football_speedy = 8
-
+#Definindo os frames por segundo para ajustar a velocidade da bola
+clock = pygame.time.Clock()
+FPS = 30
 
 game = True
 while game:
+    clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game = False
@@ -33,7 +41,7 @@ while game:
         football_y = -ball_height
 
         
-
+    #Adicionando imagens para tela principal
     window.fill((255, 255, 255))
     window.blit(background, (0, 0))
     window.blit(football, (football_x, football_y))
