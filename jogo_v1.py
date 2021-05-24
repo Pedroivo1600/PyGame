@@ -17,10 +17,10 @@ football = pygame.image.load('img/football.png').convert_alpha()
 football = pygame.transform.scale(football, (ball_width, ball_height))
 
 #Posição da bola
-football_x = random.randint(10, WIDTH-ball_width)
+football_x = random.randint(250, WIDTH-ball_width)
 football_y = random.randint(-50, -ball_height)
 #Velocidade da bola
-football_speedx = random.randint(1, 2)
+football_speedx = random.randint(-2, 2)
 football_speedy = random.randint(4, 6)
 
 #Definindo os frames por segundo para ajustar a velocidade da bola
@@ -33,18 +33,25 @@ while game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game = False
-
+    
     football_x+=football_speedx
     football_y+=football_speedy
     if football_x > WIDTH or football_y > HEIGHT:
-        football_x = 250
-        football_y = -ball_height
+        football_x = random.randint(250, WIDTH-ball_width)
+        football_y = random.randint(-50, -ball_height)
+        football_speedx = random.randint(-2, 2)
+        football_speedy = random.randint(4, 6)
+
+    x = pygame.time.get_ticks()
+    
+    print(x)
 
         
     #Adicionando imagens para tela principal
     window.fill((255, 255, 255))
     window.blit(background, (0, 0))
     window.blit(football, (football_x, football_y))
+    print(football_speedx)
 
     pygame.display.update()
 
