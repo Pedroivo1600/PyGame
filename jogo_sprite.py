@@ -1,22 +1,22 @@
 import pygame
 import random
 pygame.init()
-
+ 
 #MEDIDAS
-
+ 
 #Medidas do background (estadio)
 WIDTH = 500
 HEIGHT = 400
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-
+ 
 #Medidas das bolas
 ball_width = 30
 ball_height = 20
-
+ 
 #Medidas do goleiro
 gk_width = 70
 gk_height = 60
-
+ 
 #Inicia assets
 assets = {}
 assets['background'] =  pygame.image.load('img/estadio.png').convert()
@@ -27,10 +27,10 @@ assets['goalkeeper_img'] = pygame.image.load('img/Goalkeeper.png').convert_alpha
 assets['goalkeeper_img'] = pygame.transform.scale(assets["goalkeeper_img"], (gk_width, gk_height))
 assets['powerup'] = pygame.image.load('img/powerup_shield.png').convert_alpha()
 assets['powerup'] = pygame.transform.scale(assets['powerup'], (ball_width, ball_height))
-
+ 
 
 salvou_anim = []
-
+ 
 
 for i in range(9):
     # Os arquivos de animação são numerados de 00 a 08
@@ -46,27 +46,27 @@ class Gk(pygame.sprite.Sprite):
     def __init__(self, img):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-
+ 
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
         self.speedx = 0
-
+ 
     def update(self):
         # Atualização da posição da nave
         self.rect.x += self.speedx
-
+ 
         # Mantem dentro da tela
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
-
+ 
 class Football(pygame.sprite.Sprite):
     def __init__(self, img):
         pygame.sprite.Sprite.__init__(self)
-
+ 
         self.image = img
         self.rect = self.image.get_rect()
         #Posição da bola
@@ -75,7 +75,7 @@ class Football(pygame.sprite.Sprite):
         #Velocidade da bola
         self.speed_football_speedx = random.randint(-2, 2)
         self.speed_football_speedy = random.randint(4, 6)
-    
+   
     def update(self):
         self.rect.x += self.speed_football_speedx
         self.rect.y += self.speed_football_speedy
@@ -84,44 +84,44 @@ class Football(pygame.sprite.Sprite):
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
-
+ 
 
 class Salvou(pygame.sprite.Sprite):
     def __init__(self, center, assets):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-
+ 
         # Armazena a animação de explosão
         self.salvou_anim = assets['salvou_anim']
-
+ 
         # Inicia o processo de animação colocando a primeira imagem na tela.
         self.frame = 0  # Armazena o índice atual na animação
         self.image = self.salvou_anim[self.frame]  # Pega a primeira imagem
         self.rect = self.image.get_rect()
         self.rect.center = center  # Posiciona o centro da imagem
-
+ 
         # Guarda o tick da primeira imagem, ou seja, o momento em que a imagem foi mostrada
         self.last_update = pygame.time.get_ticks()
-
+ 
         # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
         # Quando pygame.time.get_ticks() - self.last_update > self.frame_ticks a
         # próxima imagem da animação será mostrada
         self.frame_ticks = 50
-
+ 
     def update(self):
         # Verifica o tick atual.
         now = pygame.time.get_ticks()
         # Verifica quantos ticks se passaram desde a ultima mudança de frame.
         elapsed_ticks = now - self.last_update
-
+ 
         # Se já está na hora de mudar de imagem...
         if elapsed_ticks > self.frame_ticks:
             # Marca o tick da nova imagem.
             self.last_update = now
-
+ 
             # Avança um quadro.
             self.frame += 1
-
+ 
             # Verifica se já chegou no final da animação.
             if self.frame == len(self.explosion_anim):
                 # Se sim, tchau explosão!
@@ -132,12 +132,12 @@ class Salvou(pygame.sprite.Sprite):
                 self.image = self.explosion_anim[self.frame]
                 self.rect = self.image.get_rect()
                 self.rect.center = center
-
+ 
 
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, img):
         pygame.sprite.Sprite.__init__(self)
-
+ 
         self.image = img
         self.rect = self.image.get_rect()
         #Posição do Shield
@@ -146,7 +146,7 @@ class PowerUp(pygame.sprite.Sprite):
         #Velocidade do shield
         self.speed_footbal_speedx = random.randint(-2, 2)
         self.speed_football_speedy = random.randint(4, 6)
-    
+   
     def update(self):
         self.rect.x += self.speed_footbal_speedx
         self.rect.y += self.speed_football_speedy
@@ -162,24 +162,24 @@ class PowerUp(pygame.sprite.Sprite):
 #Definindo os frames por segundo para ajustar a velocidade da bola
 clock = pygame.time.Clock()
 FPS = 30
-
+ 
 #Criando um grupo bolas
 all_balls = pygame.sprite.Group()
 all_soccer_balls = pygame.sprite.Group()
-
+ 
 #Criando o jogador
 player = Gk(assets["goalkeeper_img"])
 all_balls.add(player)
-
+ 
 #Criando as bolas
 for i in range(5):
     balls = Football(assets["football_img"])
     all_balls.add(balls)
     all_soccer_balls.add(balls)
-
+ 
 #Definindo o powerup
 powerup = PowerUp(assets['powerup'])
-
+ 
 
 game = True
 while game:
@@ -202,30 +202,37 @@ while game:
                 player.speedx += 10
             if event.key == pygame.K_RIGHT:
                 player.speedx -= 10
-
+ 
     if time_now == 15000:
+        window.blit(assets['powerup'], powerup.rect)
         powerup.update()
         time_now = 0
-
-    
+ 
+   
     #-----------------------------------
     #---- Atualiza o estado do jogo ----
     #-----------------------------------
-
+ 
     #Controlando movimentos das 5 bolas no loop
     all_balls.update()
-
+ 
     # Verifica se houve colisão entre o goleiro e a bola
     hits = pygame.sprite.spritecollide(player, all_soccer_balls, True)
-    
+    for colides in hits:
+        x = Football(assets['football_img'])
+        all_balls.add(x)
+        all_soccer_balls.add(x)
+
+   
     #Adicionando imagens para tela principal
     window.fill((255, 255, 255))
     window.blit(assets["background"], (0, 0))
-    window.blit(assets['powerup'], powerup.rect)
     all_balls.draw(window)
-
+ 
     pygame.display.update()
 
 
 
 pygame.quit()
+ 
+ 
