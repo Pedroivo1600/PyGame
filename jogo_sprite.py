@@ -177,8 +177,10 @@ for i in range(5):
     all_balls.add(balls)
     all_soccer_balls.add(balls)
  
+
 #Definindo o powerup
 powerup = PowerUp(assets['powerup'])
+
  
 
 game = True
@@ -203,10 +205,10 @@ while game:
             if event.key == pygame.K_RIGHT:
                 player.speedx -= 10
  
-    if time_now == 15000:
-        window.blit(assets['powerup'], powerup.rect)
-        powerup.update()
-        time_now = 0
+    # if time_now%10000 == 0:
+    #     x = assets['powerup']
+    #     x.draw(window)
+    #     powerup.update()
  
    
     #-----------------------------------
@@ -215,6 +217,8 @@ while game:
  
     #Controlando movimentos das 5 bolas no loop
     all_balls.update()
+
+    powerup.update()
  
     # Verifica se houve colisão entre o goleiro e a bola
     hits = pygame.sprite.spritecollide(player, all_soccer_balls, True)
@@ -222,12 +226,16 @@ while game:
         x = Football(assets['football_img'])
         all_balls.add(x)
         all_soccer_balls.add(x)
+    
+    
+        
 
    
     #Adicionando imagens para tela principal
     window.fill((255, 255, 255))
     window.blit(assets["background"], (0, 0))
     all_balls.draw(window)
+    window.blit(assets['powerup'], powerup.rect)
  
     pygame.display.update()
 
