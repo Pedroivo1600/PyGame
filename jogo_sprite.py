@@ -148,13 +148,16 @@ class PowerUp(pygame.sprite.Sprite):
         self.speed_football_speedy = random.randint(4, 6)
    
     def update(self):
-        self.rect.x += self.speed_footbal_speedx
-        self.rect.y += self.speed_football_speedy
+        global p_up
+        if p_up:
+            self.rect.x += self.speed_footbal_speedx
+            self.rect.y += self.speed_football_speedy
         if self.rect.right > WIDTH or self.rect.top > HEIGHT:
             self.rect.x = random.randint(250, WIDTH-ball_width)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
+            p_up = False
 
 
 
@@ -184,6 +187,8 @@ powerup = PowerUp(assets['powerup'])
  
 
 game = True
+t = pygame.time.get_ticks()
+p_up = False
 while game:
     time_now = pygame.time.get_ticks()
     clock.tick(FPS)
@@ -204,12 +209,14 @@ while game:
                 player.speedx += 10
             if event.key == pygame.K_RIGHT:
                 player.speedx -= 10
- 
-    # if time_now%10000 == 0:
-    #     x = assets['powerup']
-    #     x.draw(window)
-    #     powerup.update()
- 
+    #Definindo o intervalo de tempo para o powerup aparecer
+    if time_now-t >= 10000 and p_up == False:
+        p_up = True
+        print('entrou')
+        t = time_now
+    
+            
+
    
     #-----------------------------------
     #---- Atualiza o estado do jogo ----
@@ -219,6 +226,8 @@ while game:
     all_balls.update()
 
     powerup.update()
+
+
  
     # Verifica se houve colisão entre o goleiro e a bola
     hits = pygame.sprite.spritecollide(player, all_soccer_balls, True)
@@ -234,9 +243,17 @@ while game:
     #Adicionando imagens para tela principal
     window.fill((255, 255, 255))
     window.blit(assets["background"], (0, 0))
+    # window.blit(assets['powerup'], powerup.rect)
     all_balls.draw(window)
-    window.blit(assets['powerup'], powerup.rect)
- 
+    
+    #fazendo o powerup aparecer
+    if p_up:
+        print('apareceu')
+        window.blit(assets['powerup'], powerup.rect)
+        # time_p_up = pygame.time.get_ticks()
+        # if time_p_up-t >= 5000:
+        #     p_up = False
+    
     pygame.display.update()
 
 
