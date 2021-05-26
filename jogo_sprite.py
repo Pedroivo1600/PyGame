@@ -188,12 +188,12 @@ all_power_ups.add(powerup)
 
 DONE = 0
 PLAYING = 1
-EXPLODING = 2
+#ERROU = 2
 state = PLAYING
 
 
 pontos = 0
-vidas = 10
+vidas = 3
 keys_down = {}
 
 #game = True
@@ -261,6 +261,8 @@ while state != DONE:
             powerup.update_collide()
         
         #Quando o goleiro não defende a bola
+    
+  
         
 
     
@@ -286,15 +288,15 @@ while state != DONE:
     
 
     # Desenhando o score
-    text_surface = assets['score_font'].render("{:08d}".format(pontos), True, (255, 255, 0))
+    text_surface = assets['score_font'].render("{:08d}".format(pontos), True, (255, 255, 255))
     text_rect = text_surface.get_rect()
-    text_rect.midtop = (WIDTH / 2,  10)
+    text_rect.midtop = (WIDTH / 6,  HEIGHT- 379)
     window.blit(text_surface, text_rect)
 
     # Desenhando as vidas
     text_surface = assets['score_font_2'].render(chr(9829) * vidas, True, (255, 0, 0))
     text_rect = text_surface.get_rect()
-    text_rect.bottomleft = (10, HEIGHT - 10)
+    text_rect.bottomleft = (400, HEIGHT - 350)
     window.blit(text_surface, text_rect)
 
     pygame.display.update()
