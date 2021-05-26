@@ -27,20 +27,8 @@ assets['goalkeeper_img'] = pygame.image.load('img/Goalkeeper.png').convert_alpha
 assets['goalkeeper_img'] = pygame.transform.scale(assets["goalkeeper_img"], (gk_width, gk_height))
 assets['powerup'] = pygame.image.load('img/powerup_shield.png').convert_alpha()
 assets['powerup'] = pygame.transform.scale(assets['powerup'], (ball_width, ball_height))
- 
-
-salvou_anim = []
- 
-
-for i in range(9):
-    # Os arquivos de animação são numerados de 00 a 08
-    filename = 'img/salvada.png'.format(i)
-    img = pygame.image.load(filename).convert()
-    img = pygame.transform.scale(img, (32, 32))
-    salvou_anim.append(img)
-assets["salvou_anim"] = salvou_anim
-
-
+assets["score_font"] = pygame.font.Font('font/SoccerLeague.ttf', 28)
+assets["score_font_2"] = pygame.font.Font('font/PressStart2P.ttf', 28)
 
 class Gk(pygame.sprite.Sprite):
     def __init__(self, img):
@@ -158,6 +146,14 @@ class PowerUp(pygame.sprite.Sprite):
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
             p_up = False
+    def update_collide(self):
+        if not p_up:
+            self.rect.x = random.randint(250, WIDTH-ball_width)
+            self.rect.y = random.randint(-50, -ball_height)
+            self.speed_football_speedx = random.randint(-2, 2)
+            self.speed_football_speedy = random.randint(4, 6)
+            
+
 
 
 
@@ -169,6 +165,9 @@ FPS = 30
 #Criando um grupo bolas
 all_balls = pygame.sprite.Group()
 all_soccer_balls = pygame.sprite.Group()
+groups = {}
+groups["all_balls"] = all_balls
+groups["all_soccer_balls"] = all_soccer_balls
  
 #Criando o jogador
 player = Gk(assets["goalkeeper_img"])
@@ -184,31 +183,46 @@ for i in range(5):
 #Definindo o powerup
 powerup = PowerUp(assets['powerup'])
 
- 
+all_power_ups = pygame.sprite.Group()
+all_power_ups.add(powerup)
 
-game = True
+DONE = 0
+PLAYING = 1
+#ERROU = 2
+state = PLAYING
+
+
+pontos = 0
+vidas = 3
+keys_down = {}
+
+#game = True
 t = pygame.time.get_ticks()
 p_up = False
-while game:
+while state != DONE:
     time_now = pygame.time.get_ticks()
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            game = False
-        # Verifica se apertou alguma tecla.
-        if event.type == pygame.KEYDOWN:
-            # Dependendo da tecla, altera a velocidade.
-            if event.key == pygame.K_LEFT:
-                player.speedx -= 10
-            if event.key == pygame.K_RIGHT:
-                player.speedx += 10
-        # Verifica se soltou alguma tecla.
-        if event.type == pygame.KEYUP:
-            # Dependendo da tecla, altera a velocidade.
-            if event.key == pygame.K_LEFT:
-                player.speedx += 10
-            if event.key == pygame.K_RIGHT:
-                player.speedx -= 10
+            #game = False
+            state = DONE
+        if state == PLAYING:
+            # Verifica se apertou alguma tecla.
+            if event.type == pygame.KEYDOWN:
+                # Dependendo da tecla, altera a velocidade.
+                keys_down[event.key] = True
+                if event.key == pygame.K_LEFT:
+                    player.speedx -= 10
+                if event.key == pygame.K_RIGHT:
+                    player.speedx += 10
+            # Verifica se soltou alguma tecla.
+            if event.type == pygame.KEYUP:
+                # Dependendo da tecla, altera a velocidade.
+                if event.key in keys_down and keys_down[event.key]:
+                    if event.key == pygame.K_LEFT:
+                        player.speedx += 10
+                    if event.key == pygame.K_RIGHT:
+                        player.speedx -= 10
     #Definindo o intervalo de tempo para o powerup aparecer
     if time_now-t >= 10000 and p_up == False:
         p_up = True
@@ -230,12 +244,29 @@ while game:
 
  
     # Verifica se houve colisão entre o goleiro e a bola
-    hits = pygame.sprite.spritecollide(player, all_soccer_balls, True)
-    for colides in hits:
-        x = Football(assets['football_img'])
-        all_balls.add(x)
-        all_soccer_balls.add(x)
+    if state == PLAYING:
+        #Quando o goleiro pega a bola
+        hits = pygame.sprite.spritecollide(player, all_soccer_balls, True)
+        for colides in hits:
+            x = Football(assets['football_img'])
+            all_balls.add(x)
+            all_soccer_balls.add(x)
+            #Ganha pontos
+            pontos += 10
+        
+        #Quando o goleiro pega o powerup
+        hits_p_up = pygame.sprite.spritecollide(player,all_power_ups,False)
+        for colides in hits_p_up:
+            p_up = False
+            powerup.update_collide()
+        
+        #Quando o goleiro não defende a bola
     
+  
+        
+
+    
+
     
         
 
@@ -254,10 +285,22 @@ while game:
         # if time_p_up-t >= 5000:
         #     p_up = False
     
+    
+
+    # Desenhando o score
+    text_surface = assets['score_font'].render("{:08d}".format(pontos), True, (255, 255, 255))
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (WIDTH / 6,  HEIGHT- 379)
+    window.blit(text_surface, text_rect)
+
+    # Desenhando as vidas
+    text_surface = assets['score_font_2'].render(chr(9829) * vidas, True, (255, 0, 0))
+    text_rect = text_surface.get_rect()
+    text_rect.bottomleft = (400, HEIGHT - 350)
+    window.blit(text_surface, text_rect)
+
     pygame.display.update()
 
 
 
 pygame.quit()
- 
- 
