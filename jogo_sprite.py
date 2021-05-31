@@ -1,7 +1,8 @@
 import pygame
 import random
 pygame.init()
- 
+list_lives = []
+shield = False
 #MEDIDAS
  
 #Medidas do background (estadio)
@@ -65,13 +66,18 @@ class Football(pygame.sprite.Sprite):
         self.speed_football_speedy = random.randint(4, 6)
    
     def update(self):
+        global shield
         self.rect.x += self.speed_football_speedx
         self.rect.y += self.speed_football_speedy
+        if self.rect.top > HEIGHT:
+            if not shield:
+                list_lives.append(1)
         if self.rect.right > WIDTH or self.rect.top > HEIGHT:
             self.rect.x = random.randint(250, WIDTH-ball_width)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
+            
  
 
 class Salvou(pygame.sprite.Sprite):
@@ -174,7 +180,7 @@ player = Gk(assets["goalkeeper_img"])
 all_balls.add(player)
  
 #Criando as bolas
-for i in range(5):
+for i in range(1):
     balls = Football(assets["football_img"])
     all_balls.add(balls)
     all_soccer_balls.add(balls)
@@ -226,7 +232,6 @@ while state != DONE:
     #Definindo o intervalo de tempo para o powerup aparecer
     if time_now-t >= 10000 and p_up == False:
         p_up = True
-        print('entrou')
         t = time_now
     
             
@@ -257,10 +262,29 @@ while state != DONE:
         #Quando o goleiro pega o powerup
         hits_p_up = pygame.sprite.spritecollide(player,all_power_ups,False)
         for colides in hits_p_up:
+            shield = True
+            t_shield = pygame.time.get_ticks()
             p_up = False
             powerup.update_collide()
+        if shield:
+            time_shield = pygame.time.get_ticks()
+            if time_now - t_shield >= 5000:
+                shield = False
+                print('não esta mais no shield')
         
         #Quando o goleiro não defende a bola
+
+        if len(list_lives) == 1:
+            vidas = 2
+        if len(list_lives) == 2:
+            vidas = 1
+        if len(list_lives) == 3:
+            vidas = 0
+        if len(list_lives) == 4:
+            state = DONE
+
+
+        
     
   
         
@@ -279,7 +303,6 @@ while state != DONE:
     
     #fazendo o powerup aparecer
     if p_up:
-        print('apareceu')
         window.blit(assets['powerup'], powerup.rect)
         # time_p_up = pygame.time.get_ticks()
         # if time_p_up-t >= 5000:
