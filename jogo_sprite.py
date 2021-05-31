@@ -129,7 +129,7 @@ class PowerUp(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         #Posição do Shield
-        self.rect.x = random.randint(250, WIDTH-ball_width)
+        self.rect.x = random.randint(250, WIDTH-100)
         self.rect.y = random.randint(-50, -ball_height)
         #Velocidade do shield
         self.speed_footbal_speedx = random.randint(-2, 2)
@@ -141,14 +141,14 @@ class PowerUp(pygame.sprite.Sprite):
             self.rect.x += self.speed_footbal_speedx
             self.rect.y += self.speed_football_speedy
         if self.rect.right > WIDTH or self.rect.top > HEIGHT:
-            self.rect.x = random.randint(250, WIDTH-ball_width)
+            self.rect.x = random.randint(250, WIDTH-100)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
             p_up = False
     def update_collide(self):
         if not p_up:
-            self.rect.x = random.randint(250, WIDTH-ball_width)
+            self.rect.x = random.randint(250, WIDTH-100)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
