@@ -157,10 +157,12 @@ FPS = 30
  
 #Criando um grupo bolas
 all_balls = pygame.sprite.Group()
+all_power_ups = pygame.sprite.Group()
 all_soccer_balls = pygame.sprite.Group()
 groups = {}
 groups["all_balls"] = all_balls
 groups["all_soccer_balls"] = all_soccer_balls
+groups["all_power_ups"] = all_power_ups
  
 #Criando o jogador
 player = Gk(assets["goalkeeper_img"])
@@ -173,9 +175,8 @@ for i in range(1):
     all_soccer_balls.add(balls)
  
 
-#Definindo o powerup
+#Criando o powerup
 powerup = PowerUp(assets['powerup'])
-all_power_ups = pygame.sprite.Group()
 all_power_ups.add(powerup)
 
 #Estado do jogo
