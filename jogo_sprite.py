@@ -2,6 +2,8 @@ import pygame
 import random
 #Inicia o jogo
 pygame.init()
+pygame.mixer.init()
+
 
 #----------------
 # --Variáveis----      
@@ -33,6 +35,13 @@ ball_height = 20 # altura da bola
 #Medidas do goleiro
 gk_width = 70 # largura do goleiro
 gk_height = 60 # altura do goleiro
+
+
+#Carregando sons do jogo
+pygame.mixer.music.set_volume(0.4)
+goal_sound = pygame.mixer.Sound('sounds/grito_de_gol.mp3')
+save_sound = pygame.mixer.Sound('sounds/quase_gol.mp3')
+
  
 #Inicia assets
 
@@ -117,6 +126,7 @@ class Football(pygame.sprite.Sprite):
         if self.rect.top > HEIGHT:
             if not shield:
                 list_lives.append(1)
+                goal_sound.play()
         #novas posições e velocidades
         if self.rect.right > WIDTH or self.rect.top > HEIGHT or self.rect.left < 0:
             self.rect.x = random.randint(250, WIDTH-ball_width)
@@ -285,6 +295,8 @@ def gamescreen(window):
             #Quando o goleiro pega a bola
             hits = pygame.sprite.spritecollide(player, all_soccer_balls, True)
             for colides in hits:
+                pygame.mixer.music.set_volume(0.1)
+                save_sound.play()
                 x = Football(assets['football_img'])
                 all_balls.add(x)
                 all_soccer_balls.add(x)
