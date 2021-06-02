@@ -15,7 +15,16 @@ FPS = 30
 #Medidas do background (estadio)
 WIDTH = 500 # largura da tela
 HEIGHT = 400 # altura da tela
+tela_inicio = window = pygame.display.set_mode((WIDTH, HEIGHT)) #cria a tela do jogo
 window = pygame.display.set_mode((WIDTH, HEIGHT)) #cria a tela do jogo
+
+# Printando na tela
+font = pygame.font.SysFont(None, 48)
+font1= pygame.font.SysFont(None, 80)
+Titulo = font1.render('Goalkepper Pro', True, (140, 50, 50))
+start = font.render('Press "enter" to start', True, (0, 0, 0))
+game_over = font1.render('Game Over', True, (0, 0, 0))
+novamente = font.render('Quer jogar novamente? Pressione Enter', True, (0, 0, 0))
 
 #Medidas das bolas
 ball_width = 30 #largura da bola
@@ -41,6 +50,10 @@ def load_assets():
     assets["score_font_2"] = pygame.font.Font('font/PressStart2P.ttf', 28)#guarda a fonte da vida do jogador que aparecerá no jogo
     assets['golden_keeper'] = pygame.image.load('img/Golden_keeper.png').convert_alpha()
     assets['golden_keeper'] = pygame.transform.scale(assets['golden_keeper'], (gk_width, gk_height))
+    assets['tela de inicio'] =  pygame.image.load('img/Pitch 1.png').convert() 
+    assets["tela de inicio"] = pygame.transform.scale(assets["tela de inicio"], (WIDTH, HEIGHT))
+    assets['final'] =  pygame.image.load('img/final.jfif').convert() 
+    assets["final"] = pygame.transform.scale(assets["final"], (WIDTH, HEIGHT))
     return assets
 
 #======================
@@ -185,8 +198,6 @@ def gamescreen(window):
     all_balls.add(player)
 
     
-    
- 
     #Criando as bolas
     for i in range(1):
         balls = Football(assets["football_img"])
@@ -200,7 +211,9 @@ def gamescreen(window):
     #Estado do jogo
     DONE = 0 #o jogo terminou
     PLAYING = 1 #o jogador está jogando
-    state = PLAYING #definindo o estado inicial do jogo como PLAYING
+    TELA = 2
+    FINAL = 3
+    state = TELA #definindo o estado inicial do jogo como PLAYING
 
     #Inicia o placar com 0 pontos
     pontos = 0
@@ -213,7 +226,24 @@ def gamescreen(window):
 
     t = pygame.time.get_ticks()
     #Trata eventos
-    while state != DONE:
+    while state == TELA:
+        window.fill((255, 255, 255))
+        window.blit(assets["tela de inicio"], (0, 0))
+        window.blit(Titulo,(50,150))
+        window.blit(start,(90,250))
+        pygame.display.update() 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = DONE
+            if state == TELA:
+                if event.type == pygame.KEYDOWN:
+                    # Dependendo da tecla, altera a velocidade.
+                    keys_down[event.key] = True
+                    if event.key == pygame.K_RETURN:
+                            state = PLAYING
+           
+                        
+    while state == PLAYING: 
         time_now = pygame.time.get_ticks()
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -281,7 +311,7 @@ def gamescreen(window):
             if len(list_lives) == 3:
                 vidas = 0
             if len(list_lives) == 4:
-                state = DONE #Se o goleiro chegar a 0 vidas o jogo termina
+                state = FINAL #Se o goleiro chegar a 0 vidas o jogo termina
 
 
     #=====================================================
@@ -311,6 +341,23 @@ def gamescreen(window):
 
         # Mostra o novo frame para o jogador
         pygame.display.update() 
+    
+    while state == FINAL:
+        window.fill((255, 255, 255))
+        window.blit(assets["final"], (0, 0))
+        window.blit(game_over,(75,150))
+        pygame.display.update() 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = DONE
+            if state == FINAL:
+                if event.type == pygame.KEYDOWN:
+                    # Dependendo da tecla, altera a velocidade.
+                    keys_down[event.key] = True
+                    if event.key == pygame.K_RETURN:
+                        state = PLAYING
+                    else:
+                        state = DONE
 
 #Fim do loop principal
 
