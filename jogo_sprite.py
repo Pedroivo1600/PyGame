@@ -39,6 +39,8 @@ def load_assets():
     assets['powerup'] = pygame.transform.scale(assets['powerup'], (ball_width, ball_height)) #define a altura e lagura do powerup "Shield" no jogo
     assets["score_font"] = pygame.font.Font('font/SoccerLeague.ttf', 28) #guarda a fonte da pontuação que aparecerá no jogo
     assets["score_font_2"] = pygame.font.Font('font/PressStart2P.ttf', 28)#guarda a fonte da vida do jogador que aparecerá no jogo
+    assets['golden_keeper'] = pygame.image.load('img/Golden_keeper.png').convert_alpha()
+    assets['golden_keeper'] = pygame.transform.scale(assets['golden_keeper'], (gk_width, gk_height))
     return assets
 
 #======================
@@ -48,25 +50,33 @@ def load_assets():
 
 #Goleiro
 class Gk(pygame.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, img, golden_image):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
  
         self.image = img
+        self.golden_image = golden_image
+        self.regular_image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
         self.speedx = 0
  
     def update(self):
+        global shield
         # Atualização da posição da nave
         self.rect.x += self.speedx
  
         # Mantem dentro da tela
+        if shield:
+            self.image = self.golden_image
+        else:
+            self.image = self.regular_image
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
+
 
 #Bola de Futebol
 class Football(pygame.sprite.Sprite):
@@ -80,7 +90,7 @@ class Football(pygame.sprite.Sprite):
         self.rect.x = random.randint(250, WIDTH-ball_width)
         self.rect.y = random.randint(-50, -ball_height)
         #Velocidade da bola
-        self.speed_football_speedx = random.randint(-15, 15)
+        self.speed_football_speedx = random.randint(-2, 2)
         self.speed_football_speedy = random.randint(4, 6)
    
     #Atualização da posição da Bola de Futebol e outros
@@ -95,7 +105,7 @@ class Football(pygame.sprite.Sprite):
             if not shield:
                 list_lives.append(1)
         #novas posições e velocidades
-        if self.rect.right > WIDTH or self.rect.top > HEIGHT:
+        if self.rect.right > WIDTH or self.rect.top > HEIGHT or self.rect.left < 0:
             self.rect.x = random.randint(250, WIDTH-ball_width)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
@@ -130,7 +140,7 @@ class PowerUp(pygame.sprite.Sprite):
             self.rect.y += self.speed_football_speedy
         
         #Ajusta a posição do powwerup caso sua posiçao esteja maior q a largura ou altura da tela do jogo
-        if self.rect.right > WIDTH or self.rect.top > HEIGHT:
+        if self.rect.right > WIDTH or self.rect.top > HEIGHT or self.rect.left < 0:
             self.rect.x = random.randint(250, WIDTH-100)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
@@ -171,8 +181,11 @@ def gamescreen(window):
     groups["all_power_ups"] = all_power_ups
  
     #Criando o jogador
-    player = Gk(assets["goalkeeper_img"])
+    player = Gk(assets["goalkeeper_img"], assets['golden_keeper'])
     all_balls.add(player)
+
+    
+    
  
     #Criando as bolas
     for i in range(1):
@@ -213,17 +226,17 @@ def gamescreen(window):
                     # Dependendo da tecla, altera a velocidade.
                     keys_down[event.key] = True
                     if event.key == pygame.K_LEFT:
-                        player.speedx -= 10
+                        player.speedx -= 15
                     if event.key == pygame.K_RIGHT:
-                        player.speedx += 10
+                        player.speedx += 15
              # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
                     # Dependendo da tecla, altera a velocidade.
                     if event.key in keys_down and keys_down[event.key]:
                         if event.key == pygame.K_LEFT:
-                            player.speedx += 10
+                            player.speedx += 15
                         if event.key == pygame.K_RIGHT:
-                            player.speedx -= 10
+                            player.speedx -= 15
         #Definindo o intervalo de tempo para o powerup aparecer
         if time_now-t >= tempo_p_up and p_up == False:
             p_up = True
@@ -283,7 +296,6 @@ def gamescreen(window):
         #Fazendo o powerup aparecer
         if p_up:
             window.blit(assets['powerup'], powerup.rect)
-            print("funcionou")
 
         # Desenhando o placar
         text_surface = assets['score_font'].render("{:08d}".format(pontos), True, (255, 255, 255))
