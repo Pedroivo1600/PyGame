@@ -1,1 +1,1 @@
-# PyGame
+# PyGame-Jogo de futebol-Pedro Ivo,Lucas Nory,Matheus Barcellos.um jogo onde o goleiro defende as bolas e ganha uma pontuação que aparece no placar em cima da tela do pygame,foram adicionanadas um power-ups para o goleiro para o jogo ter mais dinamicidade,o arquivo onde o jogo está sendo executado é o jogo_sprite.py.
