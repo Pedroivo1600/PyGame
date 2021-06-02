@@ -166,7 +166,7 @@ def gamescreen(window):
     
     assets = load_assets()
 
-    tempo_p_up = 2000
+    tempo_p_up = 20000
     
     #Definindo os frames por segundo para ajustar a velocidade da bola
     clock = pygame.time.Clock()
@@ -188,7 +188,7 @@ def gamescreen(window):
     
  
     #Criando as bolas
-    for i in range(1):
+    for i in range(5):
         balls = Football(assets["football_img"])
         all_balls.add(balls)
         all_soccer_balls.add(balls)
@@ -269,9 +269,8 @@ def gamescreen(window):
                 p_up = False
                 powerup.update_collide()
             if shield:
-                if time_now - t_shield >= 5000:
+                if time_now - t_shield >= 10000:
                     shield = False
-                    print('não esta mais no shield')
         
             #Quando o goleiro não defende a bola
             if len(list_lives) == 1:
