@@ -1,36 +1,51 @@
 import pygame
 import random
+#Inicia o jogo
 pygame.init()
-list_lives = []
-shield = False
+
+#----------------
+# --Variáveis----      
+#----------------
+
+list_lives = [] #lista de vidas
+shield = False #boolean que indica se o powerup "Shield" está aparecendo no jogo ou não
+p_up = False #boolean que indica se o jogador colidiu com o  powerup no jogo ou não
+
 #MEDIDAS
- 
 #Medidas do background (estadio)
-WIDTH = 500
-HEIGHT = 400
-window = pygame.display.set_mode((WIDTH, HEIGHT))
+WIDTH = 500 # largura da tela
+HEIGHT = 400 # altura da tela
+window = pygame.display.set_mode((WIDTH, HEIGHT)) #cria a tela do jogo
  
 #Medidas das bolas
-ball_width = 30
-ball_height = 20
+ball_width = 30 #largura da bola
+ball_height = 20 # altura da bola
  
 #Medidas do goleiro
-gk_width = 70
-gk_height = 60
+gk_width = 70 # largura do goleiro
+gk_height = 60 # altura do goleiro
  
 #Inicia assets
-assets = {}
-assets['background'] =  pygame.image.load('img/estadio.png').convert()
-assets["background"] = pygame.transform.scale(assets["background"], (WIDTH, HEIGHT))
-assets['football_img'] =  pygame.image.load('img/football.png').convert_alpha()
-assets['football_img'] = pygame.transform.scale(assets["football_img"], (ball_width, ball_height))
-assets['goalkeeper_img'] = pygame.image.load('img/Goalkeeper.png').convert_alpha()
-assets['goalkeeper_img'] = pygame.transform.scale(assets["goalkeeper_img"], (gk_width, gk_height))
-assets['powerup'] = pygame.image.load('img/powerup_shield.png').convert_alpha()
-assets['powerup'] = pygame.transform.scale(assets['powerup'], (ball_width, ball_height))
-assets["score_font"] = pygame.font.Font('font/SoccerLeague.ttf', 28)
-assets["score_font_2"] = pygame.font.Font('font/PressStart2P.ttf', 28)
 
+assets = {}
+assets['background'] =  pygame.image.load('img/estadio.png').convert() #guarda a imagem do background que aparecerá no jogo
+assets["background"] = pygame.transform.scale(assets["background"], (WIDTH, HEIGHT)) # define a altura e largura do background
+assets['football_img'] =  pygame.image.load('img/football.png').convert_alpha() #guarda a imagem da bola de futebol
+assets['football_img'] = pygame.transform.scale(assets["football_img"], (ball_width, ball_height)) #define a altura e lagura da bola de futebol no jogo
+assets['goalkeeper_img'] = pygame.image.load('img/Goalkeeper.png').convert_alpha()#guarda a imagem do goleiro que aparecerá no jogo
+assets['goalkeeper_img'] = pygame.transform.scale(assets["goalkeeper_img"], (gk_width, gk_height))#define a altura e lagura do goleiro no jogo
+assets['powerup'] = pygame.image.load('img/powerup_shield.png').convert_alpha() #guarda a imagem do powerup "Shield" que aparecerá no jogo
+assets['powerup'] = pygame.transform.scale(assets['powerup'], (ball_width, ball_height)) #define a altura e lagura do powerup "Shield" no jogo
+assets["score_font"] = pygame.font.Font('font/SoccerLeague.ttf', 28) #guarda a fonte da pontuação que aparecerá no jogo
+assets["score_font_2"] = pygame.font.Font('font/PressStart2P.ttf', 28)#guarda a fonte da vida do jogador que aparecerá no jogo
+
+
+#======================
+#-------Classes-------
+#======================
+
+
+#Goleiro
 class Gk(pygame.sprite.Sprite):
     def __init__(self, img):
         # Construtor da classe mãe (Sprite).
@@ -51,9 +66,11 @@ class Gk(pygame.sprite.Sprite):
             self.rect.right = WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
- 
+
+#Bola de Futebol
 class Football(pygame.sprite.Sprite):
     def __init__(self, img):
+        # Construtor da classe mãe (Sprite)
         pygame.sprite.Sprite.__init__(self)
  
         self.image = img
@@ -62,76 +79,35 @@ class Football(pygame.sprite.Sprite):
         self.rect.x = random.randint(250, WIDTH-ball_width)
         self.rect.y = random.randint(-50, -ball_height)
         #Velocidade da bola
-        self.speed_football_speedx = random.randint(-2, 2)
+        self.speed_football_speedx = random.randint(-15, 15)
         self.speed_football_speedy = random.randint(4, 6)
    
+    #Atualização da posição da Bola de Futebol e outros
     def update(self):
-        global shield
+        global shield # Chama a variável "shield" definida previamente (definida incialmente como "shield = False")
+
+        #Atualização da posição da bola de futebol
         self.rect.x += self.speed_football_speedx
         self.rect.y += self.speed_football_speedy
+        #Se o jogador pegar o powerup "Shield" durante o jogo ele não perde vida
         if self.rect.top > HEIGHT:
             if not shield:
                 list_lives.append(1)
+        #novas posições e velocidades
         if self.rect.right > WIDTH or self.rect.top > HEIGHT:
             self.rect.x = random.randint(250, WIDTH-ball_width)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
-            
- 
 
-class Salvou(pygame.sprite.Sprite):
-    def __init__(self, center, assets):
+#Powerup "Shield" 
+class PowerUp(pygame.sprite.Sprite):
+   
+    # Construtor da classe.
+    def __init__(self, img):
+
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
- 
-        # Armazena a animação de explosão
-        self.salvou_anim = assets['salvou_anim']
- 
-        # Inicia o processo de animação colocando a primeira imagem na tela.
-        self.frame = 0  # Armazena o índice atual na animação
-        self.image = self.salvou_anim[self.frame]  # Pega a primeira imagem
-        self.rect = self.image.get_rect()
-        self.rect.center = center  # Posiciona o centro da imagem
- 
-        # Guarda o tick da primeira imagem, ou seja, o momento em que a imagem foi mostrada
-        self.last_update = pygame.time.get_ticks()
- 
-        # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
-        # Quando pygame.time.get_ticks() - self.last_update > self.frame_ticks a
-        # próxima imagem da animação será mostrada
-        self.frame_ticks = 50
- 
-    def update(self):
-        # Verifica o tick atual.
-        now = pygame.time.get_ticks()
-        # Verifica quantos ticks se passaram desde a ultima mudança de frame.
-        elapsed_ticks = now - self.last_update
- 
-        # Se já está na hora de mudar de imagem...
-        if elapsed_ticks > self.frame_ticks:
-            # Marca o tick da nova imagem.
-            self.last_update = now
- 
-            # Avança um quadro.
-            self.frame += 1
- 
-            # Verifica se já chegou no final da animação.
-            if self.frame == len(self.explosion_anim):
-                # Se sim, tchau explosão!
-                self.kill()
-            else:
-                # Se ainda não chegou ao fim da explosão, troca de imagem.
-                center = self.rect.center
-                self.image = self.explosion_anim[self.frame]
-                self.rect = self.image.get_rect()
-                self.rect.center = center
- 
-
-class PowerUp(pygame.sprite.Sprite):
-    def __init__(self, img):
-        pygame.sprite.Sprite.__init__(self)
- 
         self.image = img
         self.rect = self.image.get_rect()
         #Posição do Shield
@@ -140,28 +116,39 @@ class PowerUp(pygame.sprite.Sprite):
         #Velocidade do shield
         self.speed_footbal_speedx = random.randint(-2, 2)
         self.speed_football_speedy = random.randint(4, 6)
-   
+    
+    #Atualização na posição do "Power up" e outros
     def update(self):
-        global p_up
+        
+        # Chama a variável "p_up" definida previamente (definida incialmente como "p_up = False")
+        global p_up 
+        
+        #Posição do power up quando ele está aparencendo no jogo
         if p_up:
             self.rect.x += self.speed_footbal_speedx
             self.rect.y += self.speed_football_speedy
+        
+        #Ajusta a posição do powwerup caso sua posiçao esteja maior q a largura ou altura da tela do jogo
         if self.rect.right > WIDTH or self.rect.top > HEIGHT:
             self.rect.x = random.randint(250, WIDTH-100)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
             p_up = False
+    
+    #Se o jogador colidir com o power up, o código abaixo faz com que o power up continue aparecendo
     def update_collide(self):
         if not p_up:
             self.rect.x = random.randint(250, WIDTH-100)
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
-            
 
 
 
+#============================
+#-------Loop Principal-------
+#============================
 
 
 #Definindo os frames por segundo para ajustar a velocidade da bola
@@ -188,23 +175,25 @@ for i in range(1):
 
 #Definindo o powerup
 powerup = PowerUp(assets['powerup'])
-
 all_power_ups = pygame.sprite.Group()
 all_power_ups.add(powerup)
 
-DONE = 0
-PLAYING = 1
-#ERROU = 2
-state = PLAYING
+#Estado do jogo
+DONE = 0 #o jogo terminou
+PLAYING = 1 #o jogador está jogando
+state = PLAYING #definindo o estado inicial do jogo como PLAYING
 
-
+#Inicia o placar com 0 pontos
 pontos = 0
-vidas = 3
+
+#Cria um dicionário de teclas que guarda se alguma tecla estava pressionada ou não
 keys_down = {}
 
-#game = True
+#Inicia o número total de vidas como 3
+vidas = 3
+
+
 t = pygame.time.get_ticks()
-p_up = False
 while state != DONE:
     time_now = pygame.time.get_ticks()
     clock.tick(FPS)
@@ -243,11 +232,8 @@ while state != DONE:
  
     #Controlando movimentos das 5 bolas no loop
     all_balls.update()
-
     powerup.update()
 
-
- 
     # Verifica se houve colisão entre o goleiro e a bola
     if state == PLAYING:
         #Quando o goleiro pega a bola
@@ -273,7 +259,6 @@ while state != DONE:
                 print('não esta mais no shield')
         
         #Quando o goleiro não defende a bola
-
         if len(list_lives) == 1:
             vidas = 2
         if len(list_lives) == 2:
@@ -281,36 +266,23 @@ while state != DONE:
         if len(list_lives) == 3:
             vidas = 0
         if len(list_lives) == 4:
-            state = DONE
+            state = DONE #Se o goleiro chegar a 0 vidas o jogo termina
 
 
-        
-    
-  
-        
+#=====================================================
+#-------Adicionando imagens para tela principal-------
+#=====================================================
 
-    
-
-    
-        
-
-   
-    #Adicionando imagens para tela principal
+    #Fazendo o background aparecer
     window.fill((255, 255, 255))
     window.blit(assets["background"], (0, 0))
-    # window.blit(assets['powerup'], powerup.rect)
     all_balls.draw(window)
     
-    #fazendo o powerup aparecer
+    #Fazendo o powerup aparecer
     if p_up:
         window.blit(assets['powerup'], powerup.rect)
-        # time_p_up = pygame.time.get_ticks()
-        # if time_p_up-t >= 5000:
-        #     p_up = False
-    
-    
 
-    # Desenhando o score
+    # Desenhando o placar
     text_surface = assets['score_font'].render("{:08d}".format(pontos), True, (255, 255, 255))
     text_rect = text_surface.get_rect()
     text_rect.midtop = (WIDTH / 6,  HEIGHT- 379)
@@ -322,8 +294,12 @@ while state != DONE:
     text_rect.bottomleft = (400, HEIGHT - 350)
     window.blit(text_surface, text_rect)
 
-    pygame.display.update()
+    # Mostra o novo frame para o jogador
+    pygame.display.update() 
 
 
+#=========================
+#-------Finalização-------
+#=========================
 
-pygame.quit()
+pygame.quit() # Função do PyGame que finaliza os recursos utilizados
