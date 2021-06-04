@@ -39,6 +39,7 @@ gk_height = 60 # altura do goleiro
 
 #Carregando sons do jogo
 pygame.mixer.music.set_volume(0.4)
+pygame.mixer.music.load('sounds/Waka-Waka.mp3')
 goal_sound = pygame.mixer.Sound('sounds/grito_de_gol.mp3')
 save_sound = pygame.mixer.Sound('sounds/quase_gol.mp3')
 
@@ -252,8 +253,9 @@ def gamescreen(window):
                     if event.key == pygame.K_RETURN:
                             state = PLAYING
            
-                        
+                       
     while state == PLAYING: 
+        pygame.mixer.music.play(loops=-1)
         time_now = pygame.time.get_ticks()
         clock.tick(FPS)
         for event in pygame.event.get():
