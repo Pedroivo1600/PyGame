@@ -313,7 +313,7 @@ def gamescreen(window):
                 p_up = False
                 powerup.update_collide()
             if shield:
-                if time_now - t_shield >= 10000:
+                if time_now - t_shield >= 1000:
                     shield = False
         
             #Quando o goleiro não defende a bola
