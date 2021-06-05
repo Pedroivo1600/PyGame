@@ -60,6 +60,7 @@ def gamescreen(window):
 
     t = pygame.time.get_ticks()
     #Trata eventos
+    pygame.mixer.music.play(loops=-1)
     while state == TELA:
         window.fill((255, 255, 255))
         window.blit(assets["tela de inicio"], (0, 0))
@@ -76,8 +77,9 @@ def gamescreen(window):
                     if event.key == pygame.K_RETURN:
                             state = PLAYING
            
-                        
+    pygame.mixer.music.play(loops=-1)                 
     while state == PLAYING: 
+        # main_sound.play()
         time_now = pygame.time.get_ticks()
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -121,7 +123,6 @@ def gamescreen(window):
             #Quando o goleiro pega a bola
             hits = pygame.sprite.spritecollide(player, all_soccer_balls, True)
             for colides in hits:
-                pygame.mixer.music.set_volume(0.1)
                 save_sound.play()
                 x = Football(assets['football_img'])
                 all_balls.add(x)

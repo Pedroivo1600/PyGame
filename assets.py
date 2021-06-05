@@ -7,8 +7,11 @@ from config import WIDTH, HEIGHT, gk_width, gk_height,ball_width, ball_height
 #==============================
 
 #----Som
+pygame.mixer.music.load('sounds/wtime_for_africa.mp3')
 goal_sound = pygame.mixer.Sound('sounds/grito_de_gol.mp3') 
 save_sound = pygame.mixer.Sound('sounds/quase_gol.mp3')
+
+
 
 #==========================================================================
 #--Carregando e definindo as dimensões das fontes da tela inicial e final--
