@@ -1,4 +1,5 @@
 import pygame
+import random
 from config import FPS, WIDTH, HEIGHT, list_lives, shield
 from assets import load_assets, start, save_sound, Titulo, game_over
 from sprites import Gk, Football, PowerUp
@@ -13,7 +14,7 @@ def gamescreen(window):
 
     assets = load_assets()
 
-    tempo_p_up = 8000
+    tempo_p_up = random.randint(8000, 30000)
     
     #Definindo os frames por segundo para ajustar a velocidade da bola
     clock = pygame.time.Clock()
@@ -116,6 +117,7 @@ def gamescreen(window):
         #Controlando movimentos das 5 bolas no loop
         all_balls.update(shield)
         powerup.update(p_up)
+        powerup.update_collide(p_up)
 
 
         # Verifica se houve colisão entre o goleiro e a bola

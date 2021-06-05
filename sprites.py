@@ -116,3 +116,4 @@ class PowerUp(pygame.sprite.Sprite):
             self.rect.y = random.randint(-50, -ball_height)
             self.speed_football_speedx = random.randint(-2, 2)
             self.speed_football_speedy = random.randint(4, 6)
+        return p_up
