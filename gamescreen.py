@@ -14,7 +14,7 @@ def gamescreen(window):
 
     assets = load_assets()
 
-    tempo_p_up = random.randint(15000, 30000)
+    
     
     #Definindo os frames por segundo para ajustar a velocidade da bola
     clock = pygame.time.Clock()
@@ -80,6 +80,7 @@ def gamescreen(window):
            
     pygame.mixer.music.play(loops=-1)                 
     while state == PLAYING: 
+        tempo_p_up = random.randint(15000, 30000)
         print(tempo_p_up)
         # main_sound.play()
         time_now = pygame.time.get_ticks()
