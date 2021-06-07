@@ -80,7 +80,7 @@ def gamescreen(window):
            
     pygame.mixer.music.play(loops=-1)                 
     while state == PLAYING: 
-        tempo_p_up = random.randint(15000, 30000)
+        tempo_p_up = random.randint(25000, 40000)
         print(tempo_p_up)
         # main_sound.play()
         time_now = pygame.time.get_ticks()
