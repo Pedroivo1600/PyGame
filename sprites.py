@@ -10,7 +10,13 @@ from assets import goal_sound
 
 #Goleiro
 class Gk(pygame.sprite.Sprite):
+    '''
+    Esta classe é responsável pela orientação de nosso goleiro
+    '''
     def __init__(self, img, golden_image):
+        '''
+        Função construtora-Método rect para orientar o objeto controlando sua posição
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
  
@@ -23,6 +29,9 @@ class Gk(pygame.sprite.Sprite):
         self.speedx = 0
  
     def update(self,shield):
+        '''
+        Função para atualizar o posicionamento conforme a passagem de eventos
+        '''
         # Atualização da posição da nave
         self.rect.x += self.speedx
  
@@ -39,7 +48,13 @@ class Gk(pygame.sprite.Sprite):
 
 #Bola de Futebol
 class Football(pygame.sprite.Sprite):
+    '''
+    classe responsável pelo controle de posicionamento das bolas de futebol
+    '''
     def __init__(self, img):
+        '''
+        Função construtora- Método rect para orientar o objeto controlando sua posição--Definição da velocidade da bola(self.speed)
+        '''
         # Construtor da classe mãe (Sprite)
         pygame.sprite.Sprite.__init__(self)
  
@@ -54,7 +69,9 @@ class Football(pygame.sprite.Sprite):
    
     #Atualização da posição da Bola de Futebol e outros
     def update(self,shield):
-
+        '''
+        Função que atualiza a posição da bola conforme a passagem de eventos no loop principal
+        '''
         #Atualização da posição da bola de futebol
         self.rect.x += self.speed_football_speedx
         self.rect.y += self.speed_football_speedy
@@ -72,10 +89,14 @@ class Football(pygame.sprite.Sprite):
 
 #Powerup "Shield" 
 class PowerUp(pygame.sprite.Sprite):
-   
+    '''
+    Classe responsável pelo controle de posicionamento dos power-ups(shield)
+    '''
     # Construtor da classe.
     def __init__(self, img):
-
+        '''
+        Função construtora- Método rect para orientar o objeto controlando sua posição--Definição da velocidade do power-up(self.speed)
+        '''
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         self.image = img
@@ -89,7 +110,9 @@ class PowerUp(pygame.sprite.Sprite):
     
     #Atualização na posição do "Power up" e outros
     def update(self,p_up):
-        
+        '''
+        Função que atualiza a posição da bola conforme a passagem de eventos no loop principal
+        '''
         # Chama a variável "p_up" definida previamente (definida incialmente como "p_up = False")
         
 
@@ -111,6 +134,9 @@ class PowerUp(pygame.sprite.Sprite):
     
     #Se o jogador colidir com o power up, o código abaixo faz com que o power up continue aparecendo
     def update_collide(self,p_up):
+        '''
+        Após a colisão do power-up com o goleiro, esta função é responsável pelo reaparecimento do objeto
+        '''
         if not p_up:
             self.rect.x = random.randint(250, WIDTH-100)
             self.rect.y = random.randint(-50, -ball_height)
