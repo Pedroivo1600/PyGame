@@ -1,7 +1,7 @@
 # Goalkepper PRO
 Link  do jogo no youtube:
 
-Jogo desenvolvido como projeto final da diciplina Design de Software, pelos alunos: Lucas Nory,Matheus Barcellos,Pedro Ivo.
+Jogo desenvolvido como projeto final da diciplina Design de Software, pelos alunos: Lucas Ulson,Matheus Barcellos,Pedro Ivo.
 
 INSPER 2021.1, Turma 1B - Engenharia
 
