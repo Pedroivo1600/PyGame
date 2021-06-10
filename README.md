@@ -7,6 +7,7 @@ INSPER 2021.1, Turma 1B - Engenharia
 
 Professor: Humberto Sandmann
 # Como jogar?
+Execute o arquivo jogo_sprite.py
 Usando as setas direita e esquerda para se movimentar para na horizontal
 
 Você é um goleiro que busca defende todas bolas que vem na sua direção! Defenda o máximo de bolas possível,pegue o shield  e atinja o máximo de pontuaçaõ que puder e aproximar-se do seu objetivo de se tornar maior goleiro do mundo.
